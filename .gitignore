@@ -1,0 +1,14 @@
+# Environment
+.env
+venv/
+__pycache__/
+*.pyc
+
+# Data (generated)
+data/*.db
+data/pipeline.db
+data/results.json
+
+# IDE
+.vscode/
+.idea/

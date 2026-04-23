@@ -1,0 +1,252 @@
+[
+  {
+    "id": "p2_001",
+    "raw_text": "CFO confirmed a 60,000 EUR budget for the full platform. CTO and procurement team are both attending the demo next Thursday. Need go-live within 8 weeks.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "500+"}
+  },
+  {
+    "id": "p2_002",
+    "raw_text": "Large logistics company, 500 staff. Board has mandated automation across all ops departments this quarter. CEO contacted us directly. Budget has been signed off.",
+    "metadata": {"source": "linkedin", "region": "DE", "company_size": "500+"}
+  },
+  {
+    "id": "p2_003",
+    "raw_text": "Fortune 500 retail company. Formal RFP has been issued. Legal and procurement are already engaged. Budget confirmed at 120,000 EUR. Decision expected within 30 days.",
+    "metadata": {"source": "referral", "region": "US", "company_size": "10000+"}
+  },
+  {
+    "id": "p2_004",
+    "raw_text": "Repeat client, currently paying 1,800 EUR per month. Very satisfied with the platform. Wants to add three new automated workflows. Clear upgrade scope, no approval needed.",
+    "metadata": {"source": "crm", "region": "UK", "company_size": "50-200"}
+  },
+  {
+    "id": "p2_005",
+    "raw_text": "Series B startup, 80 employees, raised 15M EUR last month. CTO is leading the automation initiative. Full Q2 budget has been approved and allocated.",
+    "metadata": {"source": "email", "region": "EU", "company_size": "50-200"}
+  },
+  {
+    "id": "p2_006",
+    "raw_text": "PE-backed manufacturing firm. Partner sign-off completed last week. Budget confirmed at 80,000 EUR. They want to start immediately — fastest path to contract preferred.",
+    "metadata": {"source": "partner_referral", "region": "EU", "company_size": "200+"}
+  },
+  {
+    "id": "p2_007",
+    "raw_text": "Regional bank with full compliance sign-off. 40,000 EUR pilot budget approved by the CFO. Compliance officer and IT director both confirmed for the scoping call.",
+    "metadata": {"source": "trade_show", "region": "EU", "company_size": "200+"}
+  },
+  {
+    "id": "p2_008",
+    "raw_text": "Healthcare group managing 12 clinics. Wants to automate patient intake and monthly reporting. Compliance team is involved. Decision maker is the COO.",
+    "metadata": {"source": "trade_show", "region": "EU", "company_size": "200+"}
+  },
+  {
+    "id": "p2_009",
+    "raw_text": "Insurance company actively switching from a competitor. 30-day internal decision deadline. Operations director is the sponsor. Mid-size contract expected.",
+    "metadata": {"source": "web_form", "region": "UK", "company_size": "200+"}
+  },
+  {
+    "id": "p2_010",
+    "raw_text": "200-lawyer firm. Managing partner is directly involved. Formal RFP has been issued. Timeline is 3 months. Budget not yet confirmed but typically 30-50k EUR range.",
+    "metadata": {"source": "email", "region": "UK", "company_size": "200+"}
+  },
+  {
+    "id": "p2_011",
+    "raw_text": "E-commerce platform at 10,000 orders per day. Technical team is ready. Integration need is clearly defined. CTO wants a decision by end of month.",
+    "metadata": {"source": "web_form", "region": "US", "company_size": "200+"}
+  },
+  {
+    "id": "p2_012",
+    "raw_text": "Global manufacturer has shortlisted our platform. Vendor evaluation is underway. Meeting with VP Operations scheduled for next week. 5 departments to automate.",
+    "metadata": {"source": "partner_referral", "region": "DE", "company_size": "1000+"}
+  },
+  {
+    "id": "p2_013",
+    "raw_text": "Pharma company. CIO and compliance officer are both on the evaluation call. Six-figure budget has been approved. Regulatory review is the main dependency.",
+    "metadata": {"source": "referral", "region": "US", "company_size": "1000+"}
+  },
+  {
+    "id": "p2_014",
+    "raw_text": "Telecoms operator has mapped all integration points. 25,000 EUR pilot budget has been confirmed. IT architecture review complete. Awaiting final procurement sign-off.",
+    "metadata": {"source": "email", "region": "EU", "company_size": "1000+"}
+  },
+  {
+    "id": "p2_015",
+    "raw_text": "Senior VP at a large retail chain. Expressed clear interest in automating regional reporting. Mentioned budget availability but no specific figure. Follow-up scheduled.",
+    "metadata": {"source": "linkedin", "region": "EU", "company_size": "500+"}
+  },
+  {
+    "id": "p2_016",
+    "raw_text": "Operations director at a 500-employee logistics firm. Strong use case around fleet management automation. Budget approval is pending final sign-off from CFO.",
+    "metadata": {"source": "web_form", "region": "UK", "company_size": "500+"}
+  },
+  {
+    "id": "p2_017",
+    "raw_text": "Enterprise demo booked for next Tuesday. Contact is head of operations but seniority level unclear. Minimal information provided on use case or company size.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "unknown"}
+  },
+  {
+    "id": "p2_018",
+    "raw_text": "Manager at a mid-size company. Expressed interest in our workflow product. Very vague on timeline. Could not confirm budget. Said they are still in exploration phase.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "50-200"}
+  },
+  {
+    "id": "p2_019",
+    "raw_text": "IT contact at a 500-employee company. Reached out about automation tooling. Unclear if they are the decision maker or just gathering information for their manager.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "500+"}
+  },
+  {
+    "id": "p2_020",
+    "raw_text": "I am a university student writing my dissertation on AI automation in business. Could you send me information about how your platform works? No commercial intent.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "n/a"}
+  },
+  {
+    "id": "p2_021",
+    "raw_text": "What is your pricing? No company name provided. No stated use case. No contact details beyond the form submission email.",
+    "metadata": {"source": "web_form", "region": "unknown", "company_size": "unknown"}
+  },
+  {
+    "id": "p2_022",
+    "raw_text": "We are a 3-person startup and we are very early stage. Our budget is around 400 EUR. We do not have a specific timeline yet but we like what you do.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "1-10"}
+  },
+  {
+    "id": "p2_023",
+    "raw_text": "I am a solo freelancer and I am interested in automating some of my personal workflows. I do not have a company or team. Looking for something affordable.",
+    "metadata": {"source": "web_form", "region": "UK", "company_size": "1"}
+  },
+  {
+    "id": "p2_024",
+    "raw_text": "High school teacher exploring AI tools for classroom use. Very interested in the technology. Not a business inquiry — personal and educational interest only.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "n/a"}
+  },
+  {
+    "id": "p2_025",
+    "raw_text": "I came across your blog post about workflow automation. Very interesting. I had some general questions about how AI is used in operations. No purchase in mind currently.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "unknown"}
+  },
+  {
+    "id": "p2_026",
+    "raw_text": "I am an intern at a consulting firm and I am building a competitive landscape report on automation platforms. Could you share documentation and pricing details?",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "n/a"}
+  },
+  {
+    "id": "p2_027",
+    "raw_text": "NGO project coordinator exploring tools to reduce administrative burden. No dedicated budget. Volunteer-run organisation. Would need significant discount or free tier.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "1-10"}
+  },
+  {
+    "id": "p2_028",
+    "raw_text": "Small property agency, 8 staff. Looking to improve how we handle client follow-ups. Mentioned they have a tool budget. Seemed genuinely interested but gave little detail.",
+    "metadata": {"source": "web_form", "region": "UK", "company_size": "1-10"}
+  },
+  {
+    "id": "p2_029",
+    "raw_text": "Company inquiry from a local services business. Limited information provided. Owner reached out directly. No specific use case mentioned. Willing to book a call.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "10-50"}
+  },
+  {
+    "id": "p2_030",
+    "raw_text": "Operations manager at a financial services firm. Confirmed decision maker but budget is frozen until Q3. Expressed genuine interest. No current timeline for purchase.",
+    "metadata": {"source": "email", "region": "EU", "company_size": "200+"}
+  },
+  {
+    "id": "p2_031",
+    "raw_text": "Partner reseller reaching out on behalf of an unnamed client. Indirect revenue opportunity possible. No end-user budget or timeline disclosed. Client has not been briefed yet.",
+    "metadata": {"source": "partner_referral", "region": "EU", "company_size": "unknown"}
+  },
+  {
+    "id": "p2_032",
+    "raw_text": "Consultant representing a client they cannot disclose. Budget and timeline completely withheld. Said they would revert with more details after an internal meeting.",
+    "metadata": {"source": "email", "region": "EU", "company_size": "unknown"}
+  },
+  {
+    "id": "p2_033",
+    "raw_text": "Detailed technical questions about API architecture and rate limits. No business need mentioned. No company context. May be a developer doing research or a competitor.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "unknown"}
+  },
+  {
+    "id": "p2_034",
+    "raw_text": "Journalist from a tech publication writing a feature on AI automation. Requesting a comment and access to case studies for editorial purposes. No purchase intent.",
+    "metadata": {"source": "email", "region": "UK", "company_size": "n/a"}
+  },
+  {
+    "id": "p2_035",
+    "raw_text": "Mid-market retail company, 120 staff. Clear automation need around inventory management. Budget is available. However, their operations scale may not match our platform minimum.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "50-200"}
+  },
+  {
+    "id": "p2_036",
+    "raw_text": "Large enterprise with 3,000 staff expressing interest in process automation. Strong engagement on the call. However, their existing tech stack may be incompatible.",
+    "metadata": {"source": "trade_show", "region": "DE", "company_size": "1000+"}
+  },
+  {
+    "id": "p2_037",
+    "raw_text": "Small team of 15 but they have been using automation tools for 3 years. Very sophisticated understanding of ROI. Urgency is clear — current tool contract expires in 60 days.",
+    "metadata": {"source": "email", "region": "EU", "company_size": "10-50"}
+  },
+  {
+    "id": "p2_038",
+    "raw_text": "IT manager with a detailed and well-researched use case for automating their approvals workflow. Strong fit. Budget approval is still pending the CFO but seems likely.",
+    "metadata": {"source": "web_form", "region": "UK", "company_size": "200+"}
+  },
+  {
+    "id": "p2_039",
+    "raw_text": "German management consultancy, 150 consultants. CEO is the direct decision maker. Budget confirmed and allocated. Wants to automate internal project reporting.",
+    "metadata": {"source": "referral", "region": "DE", "company_size": "50-200"}
+  },
+  {
+    "id": "p2_040",
+    "raw_text": "Property management firm handling 200 properties. Efficiency mandate direct from board. Looking to automate tenant communications and maintenance scheduling.",
+    "metadata": {"source": "web_form", "region": "UK", "company_size": "50-200"}
+  },
+  {
+    "id": "p2_041",
+    "raw_text": "Legal tech startup, Series A funded. Clear integration need with their existing case management system. CTO engaged directly. Moving fast, want contract in 3 weeks.",
+    "metadata": {"source": "email", "region": "EU", "company_size": "10-50"}
+  },
+  {
+    "id": "p2_042",
+    "raw_text": "Regional retail chain, 50 locations. Centralised operations initiative being driven by CFO. Looking to standardise reporting across all stores. Budget approved.",
+    "metadata": {"source": "partner_referral", "region": "EU", "company_size": "200+"}
+  },
+  {
+    "id": "p2_043",
+    "raw_text": "Recent graduate exploring career in operations. Very interested in AI automation. No company or business context. Looking for learning resources and entry-level tools.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "n/a"}
+  },
+  {
+    "id": "p2_044",
+    "raw_text": "Is there a free tier? No business context provided. Did not mention a company, use case, or team size. Single question submitted via the contact form.",
+    "metadata": {"source": "web_form", "region": "unknown", "company_size": "unknown"}
+  },
+  {
+    "id": "p2_045",
+    "raw_text": "Retired senior executive, personal curiosity about AI. Very knowledgeable about business operations but no longer in an active role. No commercial application.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "n/a"}
+  },
+  {
+    "id": "p2_046",
+    "raw_text": "Manufacturing firm, 300 employees. Automation roadmap approved by board last quarter. CIO is the direct contact. Looking to start scoping within 2 weeks.",
+    "metadata": {"source": "trade_show", "region": "DE", "company_size": "200+"}
+  },
+  {
+    "id": "p2_047",
+    "raw_text": "Financial services company with a compliance-driven automation requirement. 50,000 EUR budget has been allocated. Compliance officer and IT lead are both engaged.",
+    "metadata": {"source": "referral", "region": "EU", "company_size": "200+"}
+  },
+  {
+    "id": "p2_048",
+    "raw_text": "University researcher studying automation adoption in SMEs. Academic project, no commercial pathway. Looking for anonymised case study data for a journal paper.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "n/a"}
+  },
+  {
+    "id": "p2_049",
+    "raw_text": "Pre-seed startup, still in idea phase. Very early exploration of automation tools. No product-market fit confirmed. No budget, no team beyond 2 co-founders.",
+    "metadata": {"source": "web_form", "region": "EU", "company_size": "1-10"}
+  },
+  {
+    "id": "p2_050",
+    "raw_text": "Global enterprise, 25,000 staff. Multi-year automation contract under evaluation. CIO and CFO are both named sponsors. Formal procurement process has started.",
+    "metadata": {"source": "referral", "region": "US", "company_size": "10000+"}
+  }
+]
