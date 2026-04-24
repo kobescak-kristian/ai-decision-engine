@@ -97,3 +97,15 @@ CRM reports show outcomes — not whether the AI decision was correct at the tim
 
 ```bash
 python main.py
+
+---
+
+## System Context
+
+This project is part of a larger AI decision system:
+
+- **[Reliability Engine](https://github.com/kobescak-kristian/ai-workflow-reliability-engine)** → prevents invalid AI outputs from entering workflows  
+- Decision Engine → tracks outcomes and evaluates decision correctness  
+- **[Impact Engine](https://github.com/kobescak-kristian/ai-impact-decision-intelligence-engine)** → measures financial impact and optimizes thresholds  
+
+→ Complete system: validation → evaluation → financial impact
