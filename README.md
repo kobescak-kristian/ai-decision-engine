@@ -104,10 +104,10 @@ python main.py
 
 Part of a five-engine AI decision system:
 
-- **[Reliability Engine](https://github.com/kobescak-kristian/ai-reliability-engine)** - prevents invalid AI outputs from entering workflows
-- **Decision Engine** - tracks outcomes and evaluates whether decisions were correct *(this system)*
-- **[Impact Engine](https://github.com/kobescak-kristian/ai-impact-scoring-engine)** - measures financial impact and tunes thresholds
-- **[Execution Engine](https://github.com/kobescak-kristian/ai-execution-engine)** - executes the workflow and recommends improvements
-- **[Context Engine](https://github.com/kobescak-kristian/ai-context-engine)** - grounds decisions in retrieved precedent and explains them
+- **[AI Reliability Engine](https://github.com/kobescak-kristian/ai-reliability-engine)** - prevents invalid AI outputs from entering workflows
+- **AI Decision Engine** - tracks outcomes and evaluates whether decisions were correct *(this system)*
+- **[AI Impact Scoring Engine](https://github.com/kobescak-kristian/ai-impact-scoring-engine)** - measures the financial impact of decisions and tunes thresholds
+- **[AI Execution Engine](https://github.com/kobescak-kristian/ai-execution-engine)** - executes the workflow and recommends improvements
+- **[AI Context Engine](https://github.com/kobescak-kristian/ai-context-engine)** - grounds decisions in retrieved precedent and explains them
 
 Complete system: validation → evaluation → financial impact → grounded explanation → execution
