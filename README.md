@@ -107,7 +107,7 @@ Part of a five-engine AI decision system:
 - **[Reliability Engine](https://github.com/kobescak-kristian/ai-reliability-engine)** - prevents invalid AI outputs from entering workflows
 - **Decision Engine** - tracks outcomes and evaluates whether decisions were correct *(this system)*
 - **[Impact Engine](https://github.com/kobescak-kristian/ai-impact-scoring-engine)** - measures financial impact and tunes thresholds
-- **[Execution Engine](https://github.com/kobescak-kristian/ai-execution-engine)** - executes the workflow and recommends improvements the workflow deterministically and recommends improvements
+- **[Execution Engine](https://github.com/kobescak-kristian/ai-execution-engine)** - executes the workflow and recommends improvements
 - **[Context Engine](https://github.com/kobescak-kristian/ai-context-engine)** - grounds decisions in retrieved precedent and explains them
 
 Complete system: validation → evaluation → financial impact → grounded explanation → execution
