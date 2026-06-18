@@ -102,12 +102,12 @@ python main.py
 
 ## System Context
 
-Part of a five-engine AI decision system, built in sequence:
+Part of a five-engine AI decision system:
 
-- **[Reliability Engine](https://github.com/kobescak-kristian/ai-reliability-engine)** → prevents invalid AI outputs from entering workflows
-- **Decision Engine** → tracks outcomes and evaluates whether decisions were correct *(this system)*
-- **[Impact Engine](https://github.com/kobescak-kristian/ai-impact-decision-intelligence-engine)** → measures financial impact and tunes thresholds
-- **[Execution Engine](https://github.com/kobescak-kristian/ai-execution-engine)** → runs the workflow deterministically and recommends improvements
-- **[Context Engine](https://github.com/kobescak-kristian/ai-context-engine)** → grounds decisions in retrieved precedent and explains them
+- **[Reliability Engine](https://github.com/kobescak-kristian/ai-reliability-engine)** - prevents invalid AI outputs from entering workflows
+- **Decision Engine** - tracks outcomes and evaluates whether decisions were correct *(this system)*
+- **[Impact Engine](https://github.com/kobescak-kristian/ai-impact-scoring-engine)** - measures financial impact and tunes thresholds
+- **[Execution Engine](https://github.com/kobescak-kristian/ai-execution-engine)** - executes the workflow and recommends improvements the workflow deterministically and recommends improvements
+- **[Context Engine](https://github.com/kobescak-kristian/ai-context-engine)** - grounds decisions in retrieved precedent and explains them
 
-→ Five standalone engines covering validation, decision evaluation, financial impact, workflow execution, and retrieval-grounded decision support.
+Complete system: validation → evaluation → financial impact → grounded explanation → execution
