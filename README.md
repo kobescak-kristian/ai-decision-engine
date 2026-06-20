@@ -33,7 +33,7 @@ Using a simulated 50-lead dataset with outcome feedback:
 - 11 sent to manual review  
 - 32 outcomes recorded  
 - 64% outcome coverage  
-- 72% conversion rate on sent-to-sales leads  
+- 68% conversion rate on sent-to-sales leads  
 - 32% false positive rate → roughly 1 in 3 leads sent to sales should not have been there  
 - 4 missed opportunities detected → leads that would likely have been lost without feedback analysis  
 - evaluator returned `warning` status with actionable issues  
@@ -98,6 +98,27 @@ CRM reports show outcomes — not whether the AI decision was correct at the tim
 ```bash
 python main.py
 ```
+
+### 2. Seed outcome feedback
+
+```bash
+python data/seed_outcomes.py
+```
+
+### 3. Start the API server
+
+```bash
+uvicorn api:app --reload --port 8000
+```
+
+### 4. Evaluate decision quality
+
+```bash
+curl http://localhost:8000/stats
+```
+
+Or open `http://localhost:8000/docs` and call `GET /stats` from the browser.
+
 ---
 
 ## System Context
