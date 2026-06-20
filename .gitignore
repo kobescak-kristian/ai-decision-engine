@@ -6,7 +6,6 @@ __pycache__/
 
 # Data (generated)
 data/*.db
-data/pipeline.db
 data/results.json
 
 # IDE

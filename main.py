@@ -42,7 +42,7 @@ def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
         fallback_action = FallbackAction.NONE
 
         # Minimal fallback — assign safe default on validation failure
-        # (P2 does not retry; emphasis is on decision tracking, not failure handling)
+        # (no retry; emphasis is on decision tracking, not failure handling)
         if not validation_result.valid:
             logger.warning(f"[{record.id}] Validation failed - assigning safe default")
             ai_output = AIOutput(

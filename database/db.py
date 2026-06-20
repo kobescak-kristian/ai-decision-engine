@@ -1,7 +1,7 @@
 """
 SQLite persistence layer — AI Decision Engine.
 Stores decisions and outcome feedback for performance evaluation.
-Extended from P1 with new outcomes table and evaluation queries.
+Includes decisions table and outcomes table for the feedback evaluation loop.
 """
 
 import sqlite3

@@ -4,7 +4,7 @@ from enum import Enum
 from datetime import datetime, timezone
 
 
-# ── Shared with P1 (reused) ───────────────────────────────────────────────
+# ── Core decision models ──────────────────────────────────────────────────
 
 class Category(str, Enum):
     HIGH_VALUE = "high_value"
@@ -56,7 +56,7 @@ class DecisionResult(BaseModel):
     processing_ms: Optional[float] = None
 
 
-# ── New in P2: Outcome tracking ───────────────────────────────────────────
+# ── Outcome tracking ──────────────────────────────────────────────────────
 
 class OutcomeType(str, Enum):
     CONVERTED       = "converted"

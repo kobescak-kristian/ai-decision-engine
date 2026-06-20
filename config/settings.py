@@ -38,6 +38,7 @@ class Config:
             "confidence_threshold":    cls.CONFIDENCE_THRESHOLD,
             "min_conversion_rate":     cls.MIN_CONVERSION_RATE,
             "max_false_positive_rate": cls.MAX_FALSE_POSITIVE_RATE,
+            "max_manual_review_rate":  cls.MAX_MANUAL_REVIEW_RATE,
             "db_path":                 str(cls.DB_PATH),
         }
 
