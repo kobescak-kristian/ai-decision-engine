@@ -30,7 +30,7 @@ Using a simulated 50-lead dataset with outcome feedback:
 - 50 leads processed  
 - 25 routed to sales  
 - 14 archived  
-- 12 sent to manual review  
+- 11 sent to manual review  
 - 32 outcomes recorded  
 - 64% outcome coverage  
 - 72% conversion rate on sent-to-sales leads  
