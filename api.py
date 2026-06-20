@@ -52,7 +52,7 @@ class LeadRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "id": "p2_demo_01",
+                "id": "p2_001",
                 "raw_text": "CFO confirmed 40k EUR budget. CTO and procurement involved. Go-live in 8 weeks.",
                 "metadata": {"source": "web_form", "region": "EU"}
             }
@@ -153,9 +153,9 @@ def qualify_lead(lead: LeadRequest):
     """
     try:
         run_id = generate_run_id()
-        logger.info(f"POST /qualify — {lead.id}")
+        logger.info(f"POST /qualify - {lead.id}")
         result = process_lead(lead, run_id)
-        logger.success(f"POST /qualify — {lead.id} → {result.final_decision}")
+        logger.success(f"POST /qualify - {lead.id} -> {result.final_decision}")
         return result
     except Exception as e:
         logger.error(f"POST /qualify error for {lead.id}: {e}")

@@ -22,7 +22,7 @@ def record_outcome(lead_id: str, outcome: OutcomeType) -> dict:
     Returns a confirmation dict on success.
     """
     if not lead_exists(lead_id):
-        logger.warning(f"Outcome rejected — unknown lead: {lead_id}")
+        logger.warning(f"Outcome rejected - unknown lead: {lead_id}")
         raise OutcomeError(f"Lead '{lead_id}' not found. Process it through /qualify first.")
 
     decision_record = get_lead_decision(lead_id)
@@ -36,7 +36,7 @@ def record_outcome(lead_id: str, outcome: OutcomeType) -> dict:
         timestamp=timestamp
     )
 
-    logger.success(f"Outcome recorded: {lead_id} → {outcome.value} (decision was: {decision})")
+    logger.success(f"Outcome recorded: {lead_id} -> {outcome.value} (decision was: {decision})")
 
     return {
         "lead_id":   lead_id,

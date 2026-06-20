@@ -20,7 +20,7 @@ from database.db import init_db, save_decision, generate_run_id
 
 
 def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
-    logger.section("AI DECISION ENGINE — START")
+    logger.section("AI DECISION ENGINE - START")
 
     for k, v in config.summary().items():
         logger.info(f"  {k}: {v}")
@@ -44,7 +44,7 @@ def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
         # Minimal fallback — assign safe default on validation failure
         # (P2 does not retry; emphasis is on decision tracking, not failure handling)
         if not validation_result.valid:
-            logger.warning(f"[{record.id}] Validation failed — assigning safe default")
+            logger.warning(f"[{record.id}] Validation failed - assigning safe default")
             ai_output = AIOutput(
                 category="unknown",
                 confidence=0.0,
@@ -70,7 +70,7 @@ def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
         save_decision(result_dict, run_id)
 
         logger.info(
-            f"[{record.id}] → {final_decision.value} | "
+            f"[{record.id}] -> {final_decision.value} | "
             f"category={ai_output.category} | conf={ai_output.confidence:.2f} | {processing_ms}ms"
         )
 
@@ -100,8 +100,8 @@ def _print_summary(results: list[dict], run_id: str):
     for decision, count in sorted(decisions.items()):
         logger.info(f"  {decision}: {count}")
     logger.info(f"Avg time      : {avg_ms}ms per record")
-    logger.success(f"Persisted → {config.DB_PATH}")
-    logger.info("Next step: POST outcomes to /outcome — then GET /stats to evaluate decision quality")
+    logger.success(f"Persisted -> {config.DB_PATH}")
+    logger.info("Next step: POST outcomes to /outcome - then GET /stats to evaluate decision quality")
 
 
 def _write_output(results: list[dict], output_path: str):
@@ -109,7 +109,7 @@ def _write_output(results: list[dict], output_path: str):
     path.parent.mkdir(exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, default=str)
-    logger.success(f"Results written → {output_path}")
+    logger.success(f"Results written -> {output_path}")
 
 
 if __name__ == "__main__":

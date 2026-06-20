@@ -91,6 +91,19 @@ CRM reports show outcomes — not whether the AI decision was correct at the tim
 
 ---
 
+## Setup
+
+Python 3.11+
+
+```bash
+pip install -r requirements.txt
+cp env.example .env
+```
+
+The system runs in simulation mode without an `OPENAI_API_KEY`. To use a real model, add it to `.env`. See [`env.example`](env.example) for all available settings.
+
+---
+
 ## Quick demo
 
 ### 1. Run batch pipeline
@@ -118,6 +131,22 @@ curl http://localhost:8000/stats
 ```
 
 Or open `http://localhost:8000/docs` and call `GET /stats` from the browser.
+
+---
+
+## API reference
+
+Start the server with `uvicorn api:app --reload --port 8000`, then:
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/qualify` | Process a lead through the decision pipeline |
+| POST | `/outcome` | Record the real-world outcome for a decision |
+| GET | `/stats` | Decision quality metrics, insights, and outcome breakdown |
+| GET | `/audit` | Recent decisions with outcome status (default: last 20) |
+| GET | `/health` | Health check — database connectivity and config |
+
+Interactive docs: `http://localhost:8000/docs`
 
 ---
 

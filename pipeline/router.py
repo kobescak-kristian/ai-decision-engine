@@ -28,7 +28,7 @@ def route(ai_output: AIOutput, fallback_action: FallbackAction, record_id: str) 
             logger.success(f"[{record_id}] Route: SEND_TO_SALES (conf={conf:.2f})")
             return FinalDecision.SEND_TO_SALES
         else:
-            logger.warning(f"[{record_id}] Route: MANUAL_REVIEW — high_value conf={conf:.2f} below threshold")
+            logger.warning(f"[{record_id}] Route: MANUAL_REVIEW - high_value conf={conf:.2f} below threshold")
             return FinalDecision.MANUAL_REVIEW
 
     elif cat == "low_value":

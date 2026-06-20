@@ -150,7 +150,7 @@ def _generate_insights(metrics: dict) -> dict:
     if not issues:
         issues.append("All metrics within acceptable thresholds.")
 
-    logger.info(f"Evaluation complete — status: {status}, issues: {len(issues)}")
+    logger.info(f"Evaluation complete - status: {status}, issues: {len(issues)}")
 
     return {
         "status": status,
