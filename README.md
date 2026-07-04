@@ -11,13 +11,17 @@ This system closes that gap.
 
 ---
 
-## What this solves
+## Problem
 
 Most AI lead-routing systems stop at classification.
 
 They decide where a lead should go, but they do not measure whether that decision was actually right.
 
 This creates silent failure: sales teams receive unqualified leads, real buyers are missed, and no system exists to detect or correct it.
+
+---
+
+## Solution
 
 This system records the original decision, accepts the real-world outcome later, and evaluates decision quality over time.
 
@@ -147,6 +151,18 @@ Start the server with `uvicorn api:app --reload --port 8000`, then:
 | GET | `/health` | Health check — database connectivity and config |
 
 Interactive docs: `http://localhost:8000/docs`
+
+---
+
+## Version Log
+
+| Version | Date | Change |
+|---|---|---|
+| v1.0 | 2026-04-23 | Initial release — decision pipeline, feedback loop, API |
+| v1.0 | 2026-04-24 | Added System Context section; clarified project title |
+| v1.0 | 2026-06-15 – 2026-06-18 | Fixed README casing/formatting; corrected System Context references across all five engines |
+| v1.0 | 2026-06-20 | Added outcome seeding script and demo sequence; fixed decision routing count; cleaned up low-severity audit items |
+| v1.0 | 2026-07-04 | Adopted ARTIFACT_STANDARD Tier 0 — CLAUDE.md, pre-push validation, README restructure, first ADR |
 
 ---
 
