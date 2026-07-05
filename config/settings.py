@@ -10,9 +10,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# A placeholder key (the old env.example value) must behave like no key at
+# all — otherwise `cp env.example .env` silently disables simulation mode
+# and every AI call fails with 401 (audit finding B1).
+PLACEHOLDER_API_KEYS = {"your_openai_api_key_here"}
+
+
 class Config:
     # ── OpenAI ────────────────────────────────────────────────────────────
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    _RAW_OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip()
+    OPENAI_API_KEY: str = (
+        "" if _RAW_OPENAI_API_KEY.lower() in PLACEHOLDER_API_KEYS
+        else _RAW_OPENAI_API_KEY
+    )
     OPENAI_MODEL: str   = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
     # ── Pipeline ──────────────────────────────────────────────────────────
@@ -29,6 +39,15 @@ class Config:
     @classmethod
     def simulation_mode(cls) -> bool:
         return not bool(cls.OPENAI_API_KEY)
+
+    @classmethod
+    def simulation_reason(cls) -> str | None:
+        """Why the system is in simulation mode; None when a real key is set."""
+        if not cls.simulation_mode():
+            return None
+        if cls._RAW_OPENAI_API_KEY:
+            return "OPENAI_API_KEY is the env.example placeholder - treated as unset"
+        return "OPENAI_API_KEY is not set"
 
     @classmethod
     def summary(cls) -> dict:

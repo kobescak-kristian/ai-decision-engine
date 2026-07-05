@@ -1,4 +1,4 @@
-﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.0
+﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.1
 
 Most AI systems make decisions.  
 Few systems know if those decisions were actually correct.
@@ -104,7 +104,7 @@ pip install -r requirements.txt
 cp env.example .env
 ```
 
-The system runs in simulation mode without an `OPENAI_API_KEY`. To use a real model, add it to `.env`. See [`env.example`](env.example) for all available settings.
+`env.example` ships with an empty `OPENAI_API_KEY`, so this setup starts in **simulation mode** — the run banner prints `MODE: SIMULATION` with the reason, and `GET /health` reports it. To use a real model, add your key to `.env`; an invalid key aborts the run loudly instead of degrading results. See [`env.example`](env.example) for all available settings.
 
 ---
 
@@ -163,6 +163,7 @@ Interactive docs: `http://localhost:8000/docs`
 | v1.0 | 2026-06-15 – 2026-06-18 | Fixed README casing/formatting; corrected System Context references across all five engines |
 | v1.0 | 2026-06-20 | Added outcome seeding script and demo sequence; fixed decision routing count; cleaned up low-severity audit items |
 | v1.0 | 2026-07-04 | Adopted ARTIFACT_STANDARD Tier 0 — CLAUDE.md, pre-push validation, README restructure, first ADR |
+| v1.1 | 2026-07-05 | Audit remediation (B1, silent degradation): placeholder key detection, simulation-mode banner, loud abort on auth failure, fallback count and reasons in run summary |
 
 ---
 

@@ -115,15 +115,20 @@ SIMULATED = {
 }
 
 
+class AIAuthError(RuntimeError):
+    """The AI provider rejected our credentials. This is a config problem,
+    not a per-lead problem — the whole run must abort, never degrade."""
+
+
 def call_openai(record: InputRecord, clean_text: str) -> dict | None:
     if not config.OPENAI_API_KEY:
         logger.debug(f"Simulation mode for {record.id}")
         return SIMULATED.get(record.id)
 
-    try:
-        import openai
-        client = openai.OpenAI(api_key=config.OPENAI_API_KEY)
+    import openai
+    client = openai.OpenAI(api_key=config.OPENAI_API_KEY)
 
+    try:
         response = client.chat.completions.create(
             model=config.OPENAI_MODEL,
             messages=[
@@ -137,6 +142,11 @@ def call_openai(record: InputRecord, clean_text: str) -> dict | None:
         logger.debug(f"OpenAI response for {record.id}: {raw}")
         return json.loads(raw)
 
+    except openai.AuthenticationError as e:
+        raise AIAuthError(
+            "OpenAI rejected the API key (HTTP 401). "
+            "Fix OPENAI_API_KEY in .env, or leave it empty to run in simulation mode."
+        ) from e
     except json.JSONDecodeError as e:
         logger.error(f"Non-JSON response for {record.id}: {e}")
         return None

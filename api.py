@@ -32,13 +32,18 @@ from database.db import (
 
 init_db()
 
+if config.simulation_mode():
+    logger.warning(f"MODE: SIMULATION - {config.simulation_reason()}")
+else:
+    logger.info(f"MODE: LIVE ({config.OPENAI_MODEL})")
+
 app = FastAPI(
     title="AI Decision Engine",
     description=(
         "Evaluates whether AI-driven lead decisions are actually effective. "
         "Decisions are made, outcomes are tracked, and performance is measured over time."
     ),
-    version="1.0.0"
+    version="1.1.0"
 )
 
 
@@ -139,8 +144,9 @@ def health():
         "status":              "ok" if db_ok else "degraded",
         "database":            "connected" if db_ok else "unreachable",
         "simulation_mode":     config.simulation_mode(),
+        "simulation_reason":   config.simulation_reason(),
         "confidence_threshold": config.CONFIDENCE_THRESHOLD,
-        "version":             "1.0.0"
+        "version":             "1.1.0"
     }
 
 
