@@ -88,7 +88,7 @@ def process_lead(lead: LeadRequest, run_id: str) -> LeadResponse:
     t_start = time.time()
     record  = InputRecord(id=lead.id, raw_text=lead.raw_text, metadata=lead.metadata)
 
-    ai_output         = ai_processor.process_record(record)
+    ai_output, ai_failure_reason = ai_processor.process_record(record)
     validation_result = validator.validate(ai_output, record.id)
 
     fallback_action = FallbackAction.NONE
@@ -97,7 +97,11 @@ def process_lead(lead: LeadRequest, run_id: str) -> LeadResponse:
         ai_output = AIOutput(
             category="unknown",
             confidence=0.0,
-            reason="Validation failed — safe default assigned."
+            reason=(
+                f"Validation failed — safe default assigned. Cause: {ai_failure_reason}"
+                if ai_failure_reason else
+                "Validation failed — safe default assigned."
+            )
         )
         fallback_action = FallbackAction.MANUAL_REVIEW_FLAGGED
         validation_result = validator.validate(ai_output, record.id)

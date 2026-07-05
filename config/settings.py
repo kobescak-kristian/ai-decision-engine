@@ -24,6 +24,9 @@ class Config:
         else _RAW_OPENAI_API_KEY
     )
     OPENAI_MODEL: str   = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    # Standard OpenAI SDK override — lets ops point at a proxy/mock, and
+    # lets tests point at an unreachable endpoint to exercise the abort path.
+    OPENAI_BASE_URL: str | None = os.getenv("OPENAI_BASE_URL", "").strip() or None
 
     # ── Pipeline ──────────────────────────────────────────────────────────
     CONFIDENCE_THRESHOLD: float = float(os.getenv("CONFIDENCE_THRESHOLD", "0.60"))

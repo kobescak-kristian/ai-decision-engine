@@ -120,13 +120,31 @@ class AIAuthError(RuntimeError):
     not a per-lead problem — the whole run must abort, never degrade."""
 
 
-def call_openai(record: InputRecord, clean_text: str) -> dict | None:
+class AIConnectionError(RuntimeError):
+    """The AI provider was unreachable (network/timeout/DNS/other transport
+    failure). This is a systemic problem, not a per-lead problem — the
+    whole run must abort, never degrade."""
+
+
+def _describe(e: Exception, limit: int = 200) -> str:
+    """Actual exception class + message, truncated — so root cause
+    survives into the fallback summary and the persisted decision reason
+    instead of a generic 'no output' string."""
+    text = f"{type(e).__name__}: {e}"
+    return text if len(text) <= limit else text[:limit] + "..."
+
+
+def call_openai(record: InputRecord, clean_text: str) -> tuple[dict | None, str | None]:
+    """Returns (raw_output, failure_reason). failure_reason is None on success."""
     if not config.OPENAI_API_KEY:
         logger.debug(f"Simulation mode for {record.id}")
-        return SIMULATED.get(record.id)
+        return SIMULATED.get(record.id), None
 
     import openai
-    client = openai.OpenAI(api_key=config.OPENAI_API_KEY)
+    client_kwargs = {"api_key": config.OPENAI_API_KEY}
+    if config.OPENAI_BASE_URL:
+        client_kwargs["base_url"] = config.OPENAI_BASE_URL
+    client = openai.OpenAI(**client_kwargs)
 
     try:
         response = client.chat.completions.create(
@@ -140,29 +158,39 @@ def call_openai(record: InputRecord, clean_text: str) -> dict | None:
         )
         raw = response.choices[0].message.content.strip()
         logger.debug(f"OpenAI response for {record.id}: {raw}")
-        return json.loads(raw)
+        return json.loads(raw), None
 
     except openai.AuthenticationError as e:
         raise AIAuthError(
             "OpenAI rejected the API key (HTTP 401). "
             "Fix OPENAI_API_KEY in .env, or leave it empty to run in simulation mode."
         ) from e
+    except openai.APIConnectionError as e:
+        # Covers APITimeoutError too (it subclasses APIConnectionError) —
+        # DNS failures, refused connections, timeouts all land here.
+        raise AIConnectionError(
+            f"Could not reach the OpenAI API ({_describe(e)})"
+        ) from e
     except json.JSONDecodeError as e:
         logger.error(f"Non-JSON response for {record.id}: {e}")
-        return None
+        return None, _describe(e)
     except Exception as e:
         logger.error(f"OpenAI call failed for {record.id}: {e}")
-        return None
+        return None, _describe(e)
 
 
-def process_record(record: InputRecord) -> AIOutput | None:
-    raw = call_openai(record, record.raw_text)
+def process_record(record: InputRecord) -> tuple[AIOutput | None, str | None]:
+    """Returns (ai_output, failure_reason). failure_reason is None on success
+    or when the failure is a plain schema/range validation issue with an
+    already-descriptive error (handled downstream by pipeline.validator)."""
+    raw, failure_reason = call_openai(record, record.raw_text)
     if raw is None:
-        logger.warning(f"[{record.id}] No AI output returned")
-        return None
+        logger.warning(f"[{record.id}] No AI output returned ({failure_reason or 'no data'})")
+        return None, failure_reason
 
     try:
-        return AIOutput(**raw)
+        return AIOutput(**raw), None
     except Exception as e:
+        reason = _describe(e)
         logger.error(f"Could not parse AI output for {record.id}: {e}")
-        return None
+        return None, reason

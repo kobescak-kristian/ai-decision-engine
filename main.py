@@ -14,11 +14,27 @@ from pathlib import Path
 
 from pipeline.input_handler import load_inputs
 from pipeline import ai_processor, validator, router
-from pipeline.ai_processor import AIAuthError
+from pipeline.ai_processor import AIAuthError, AIConnectionError
 from models.schemas import DecisionResult, FallbackAction, FinalDecision, AIOutput
 from config.settings import config
 from utils.logger import logger
 from database.db import init_db, save_decision, generate_run_id
+
+# Defense in depth: some AI-layer failures (rate limits, 5xx, provider
+# outages) don't raise AIAuthError/AIConnectionError but still recur
+# identically across many leads — that pattern is systemic, not per-lead.
+SYSTEMIC_FAILURE_THRESHOLD = 3
+
+
+class SystemicFailureError(RuntimeError):
+    """N consecutive leads failed with the same AI-layer reason."""
+
+
+def _abort(exc: Exception, records_committed: int):
+    logger.section("RUN ABORTED")
+    logger.error(f"FATAL: {type(exc).__name__}: {exc}")
+    logger.error(f"{records_committed} record(s) were processed and persisted before the abort.")
+    sys.exit(1)
 
 
 def _print_mode_banner():
@@ -44,13 +60,19 @@ def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
 
     records = load_inputs(input_path)
     results = []
-    fallbacks = []   # (record_id, original validation errors) — reported in summary
+    fallbacks = []   # (record_id, fallback reason) — reported in summary
+    consecutive_ai_failures = 0
+    last_ai_failure_reason  = None
 
     for record in records:
         logger.section(f"Processing: {record.id}")
         t_start = time.time()
 
-        ai_output         = ai_processor.process_record(record)
+        try:
+            ai_output, ai_failure_reason = ai_processor.process_record(record)
+        except (AIAuthError, AIConnectionError) as e:
+            _abort(e, len(results))
+
         validation_result = validator.validate(ai_output, record.id)
 
         fallback_action = FallbackAction.NONE
@@ -58,15 +80,44 @@ def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
         # Minimal fallback — assign safe default on validation failure
         # (no retry; emphasis is on decision tracking, not failure handling)
         if not validation_result.valid:
-            logger.warning(f"[{record.id}] Validation failed - assigning safe default")
-            fallbacks.append((record.id, "; ".join(validation_result.errors)))
+            fallback_reason = ai_failure_reason or "; ".join(validation_result.errors)
+            logger.warning(f"[{record.id}] Validation failed - assigning safe default ({fallback_reason})")
+            fallbacks.append((record.id, fallback_reason))
+
+            if ai_failure_reason:
+                if ai_failure_reason == last_ai_failure_reason:
+                    consecutive_ai_failures += 1
+                else:
+                    last_ai_failure_reason  = ai_failure_reason
+                    consecutive_ai_failures = 1
+
+                if consecutive_ai_failures >= SYSTEMIC_FAILURE_THRESHOLD:
+                    _abort(
+                        SystemicFailureError(
+                            f"{consecutive_ai_failures} consecutive leads failed with the same "
+                            f"AI-layer reason (not a typed auth/connection error, but the pattern "
+                            f"is systemic): {ai_failure_reason}"
+                        ),
+                        len(results)
+                    )
+            else:
+                consecutive_ai_failures = 0
+                last_ai_failure_reason  = None
+
             ai_output = AIOutput(
                 category="unknown",
                 confidence=0.0,
-                reason="Validation failed — safe default assigned."
+                reason=(
+                    f"Validation failed — safe default assigned. Cause: {ai_failure_reason}"
+                    if ai_failure_reason else
+                    "Validation failed — safe default assigned."
+                )
             )
             fallback_action = FallbackAction.MANUAL_REVIEW_FLAGGED
             validation_result = validator.validate(ai_output, record.id)
+        else:
+            consecutive_ai_failures = 0
+            last_ai_failure_reason  = None
 
         final_decision = router.route(ai_output, fallback_action, record.id)
         processing_ms  = round((time.time() - t_start) * 1000, 2)
@@ -140,9 +191,7 @@ if __name__ == "__main__":
     parser.add_argument("--input",  default="data/sample_input.json")
     parser.add_argument("--output", default="data/results.json")
     args = parser.parse_args()
-    try:
-        run_pipeline(args.input, args.output)
-    except AIAuthError as e:
-        logger.error(f"FATAL: {e}")
-        logger.error("Run aborted - no leads were processed with a broken key.")
-        sys.exit(1)
+    # Abort (non-zero exit) is handled inline in run_pipeline via _abort(),
+    # so that the FATAL message can report how many records were already
+    # committed before the failure was detected.
+    run_pipeline(args.input, args.output)
