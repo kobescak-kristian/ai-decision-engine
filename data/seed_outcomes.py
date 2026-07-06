@@ -5,7 +5,11 @@ Run after python main.py has populated data/decisions.db.
 Usage:
     python data/seed_outcomes.py
 
-Safe to rerun — clears existing outcomes for these leads before inserting.
+Idempotent: outcomes are one-per-lead (UNIQUE(lead_id) on the outcomes
+table, audit finding M3). Re-running this script against an already
+seeded DB skips leads that already have a recorded outcome instead of
+erroring out or replacing it — there is no correction path in v1 (see
+README Known Limitations).
 """
 
 import sys
@@ -13,8 +17,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from database.db import _connect, init_db
-from pipeline.outcome_handler import record_outcome
+from database.db import init_db
+from pipeline.outcome_handler import record_outcome, OutcomeError, OutcomeConflictError
 from models.schemas import OutcomeType
 
 OUTCOMES = {
@@ -47,29 +51,24 @@ OUTCOMES = {
 
 def seed():
     init_db()
-    lead_ids = list(OUTCOMES.keys())
 
-    # Clear existing outcomes for these leads so reruns are safe
-    with _connect() as conn:
-        placeholders = ",".join("?" * len(lead_ids))
-        deleted = conn.execute(
-            f"DELETE FROM outcomes WHERE lead_id IN ({placeholders})", lead_ids
-        ).rowcount
-    if deleted:
-        print(f"Cleared {deleted} existing outcome(s) for clean rerun.")
+    inserted         = 0
+    already_recorded = 0
+    skipped          = 0
 
-    inserted = 0
-    skipped  = 0
     for lead_id, outcome_str in OUTCOMES.items():
         try:
             record_outcome(lead_id, OutcomeType(outcome_str))
             inserted += 1
-        except Exception as e:
+        except OutcomeConflictError:
+            already_recorded += 1
+        except OutcomeError as e:
             print(f"  SKIP {lead_id}: {e}")
             skipped += 1
 
-    print(f"\nOutcomes seeded: {inserted} inserted, {skipped} skipped")
-    print(f"Coverage: {inserted}/50 = {round(inserted / 50 * 100)}%")
+    covered = inserted + already_recorded
+    print(f"\nOutcomes seeded: {inserted} inserted, {already_recorded} already recorded, {skipped} skipped")
+    print(f"Coverage: {covered}/50 = {round(covered / 50 * 100)}%")
     print("\nNext: GET /stats to evaluate decision quality")
 
 

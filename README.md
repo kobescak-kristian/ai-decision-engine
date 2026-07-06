@@ -1,4 +1,4 @@
-﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.2
+﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.3
 
 Most AI systems make decisions.  
 Few systems know if those decisions were actually correct.
@@ -153,7 +153,15 @@ Start the server with `uvicorn api:app --reload --port 8000`, then:
 
 Re-qualifying an existing `lead_id` via `POST /qualify` never overwrites its prior decision — it appends a new version. `/stats` and the default `/audit` list always read the latest version; `GET /audit/{lead_id}` shows every version with timestamps.
 
+`POST /outcome` accepts one outcome per lead — a second POST for the same `lead_id` returns `409 Conflict` naming the existing outcome and when it was recorded, instead of overwriting it.
+
 Interactive docs: `http://localhost:8000/docs`
+
+---
+
+## Known Limitations
+
+- Outcome correction is not supported in v1. Outcomes are one-per-lead (`UNIQUE(lead_id)`); once recorded, a lead's outcome cannot be changed through the API — a second `POST /outcome` is rejected with `409 Conflict`, not applied.
 
 ---
 
@@ -169,6 +177,7 @@ Interactive docs: `http://localhost:8000/docs`
 | v1.1 | 2026-07-05 | Audit remediation (B1, silent degradation): placeholder key detection, simulation-mode banner, loud abort on auth failure, fallback count and reasons in run summary |
 | v1.1 | 2026-07-06 | Audit remediation (silent degradation, follow-up): loud abort on unreachable API and on repeated identical AI-layer failures; real exception class/message now recorded as the fallback reason instead of a generic "no output" string |
 | v1.2 | 2026-07-06 | Audit remediation (M2, mutable decisions): decisions are now append-only and versioned per lead_id — re-qualifying a lead adds a new version instead of overwriting; `/stats` and `/audit` read the latest version, `GET /audit/{lead_id}` exposes full history |
+| v1.3 | 2026-07-06 | Audit remediation (M3, duplicate outcomes): outcomes are now one-per-lead (`UNIQUE(lead_id)`) — a second `POST /outcome` for the same lead returns 409 instead of being silently double-counted; `seed_outcomes.py` is idempotent (skips already-recorded leads instead of clearing and re-inserting) |
 
 ---
 

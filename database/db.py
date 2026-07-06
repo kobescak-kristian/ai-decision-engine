@@ -16,6 +16,13 @@ is generated and gitignored — delete it before running against this
 version of the code; a pre-existing DB from the old (unversioned) schema
 will not be altered by CREATE TABLE IF NOT EXISTS and will error on the
 new INSERT.
+
+Outcomes are one-per-lead (audit finding M3: duplicate POSTs to /outcome
+let a single lead count as both a conversion and a false positive,
+rates summing over 100%). `outcomes.lead_id` is UNIQUE; a second outcome
+for an already-recorded lead is rejected in pipeline/outcome_handler.py,
+not silently replaced. Same fresh-schema caveat as above applies to a
+pre-existing DB from before this constraint existed.
 """
 
 import sqlite3
@@ -59,10 +66,13 @@ def init_db():
 
         # Outcomes table — feedback loop, linked to decisions by lead_id
         # (never by row id), so it stays valid across decision versions.
+        # One outcome per lead: lead_id is UNIQUE, so a duplicate INSERT
+        # fails at the DB level even if the application-level check in
+        # pipeline/outcome_handler.py is ever bypassed.
         conn.execute("""
             CREATE TABLE IF NOT EXISTS outcomes (
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                lead_id     TEXT NOT NULL,
+                lead_id     TEXT NOT NULL UNIQUE,
                 decision    TEXT NOT NULL,
                 outcome     TEXT NOT NULL,
                 timestamp   TEXT NOT NULL,
@@ -165,6 +175,16 @@ def get_decision_history(lead_id: str) -> list[dict]:
             "SELECT * FROM decisions WHERE lead_id = ? ORDER BY version ASC", (lead_id,)
         ).fetchall()
     return [dict(r) for r in rows]
+
+
+def get_outcome(lead_id: str) -> dict | None:
+    """The single recorded outcome for this lead, if any (outcomes are
+    one-per-lead — UNIQUE(lead_id))."""
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT * FROM outcomes WHERE lead_id = ?", (lead_id,)
+        ).fetchone()
+    return dict(row) if row else None
 
 
 def get_lead_outcomes(lead_id: str) -> list[dict]:

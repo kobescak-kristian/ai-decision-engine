@@ -21,7 +21,7 @@ from models.schemas import (
     AIOutput, OutcomeRequest, OutcomeType
 )
 from pipeline import ai_processor, validator, router
-from pipeline.outcome_handler import record_outcome, OutcomeError
+from pipeline.outcome_handler import record_outcome, OutcomeError, OutcomeConflictError
 from pipeline.evaluator import compute_metrics
 from config.settings import config
 from utils.logger import logger
@@ -44,7 +44,7 @@ app = FastAPI(
         "Evaluates whether AI-driven lead decisions are actually effective. "
         "Decisions are made, outcomes are tracked, and performance is measured over time."
     ),
-    version="1.2.0"
+    version="1.3.0"
 )
 
 
@@ -151,7 +151,7 @@ def health():
         "simulation_mode":     config.simulation_mode(),
         "simulation_reason":   config.simulation_reason(),
         "confidence_threshold": config.CONFIDENCE_THRESHOLD,
-        "version":             "1.2.0"
+        "version":             "1.3.0"
     }
 
 
@@ -179,13 +179,16 @@ def submit_outcome(request: OutcomeRequest):
     Record what actually happened after a lead decision was made.
     Outcomes: converted | not_converted | ignored | wrong_segment | delayed
 
-    The lead must have been processed through /qualify first.
-    This is how the feedback loop works — outcomes are stored against
-    the original decision and feed the evaluation engine.
+    The lead must have been processed through /qualify first. One outcome
+    per lead — a second POST for the same lead_id returns 409 Conflict
+    naming the existing outcome and when it was recorded; it does not
+    overwrite it (outcome correction is not supported in v1).
     """
     try:
         result = record_outcome(request.lead_id, request.outcome)
         return OutcomeResponse(**result)
+    except OutcomeConflictError as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except OutcomeError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
