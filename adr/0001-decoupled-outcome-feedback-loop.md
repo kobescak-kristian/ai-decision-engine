@@ -46,3 +46,14 @@ verdict.
 - The 30% gate and the three evaluation thresholds (`MIN_CONVERSION_RATE`,
   `MAX_FALSE_POSITIVE_RATE`, `MAX_MANUAL_REVIEW_RATE`, `config/settings.py`) are
   static config values, not learned — tuning them is a manual step, not automated.
+
+## Clarification (2026-07-06)
+"Written once" above described intent, not the original implementation: `save_decision()`
+used `INSERT OR REPLACE` keyed on `lead_id`, so re-qualifying a lead silently destroyed
+the prior decision row — including any outcome already evaluated against it. Decisions
+are now append-only and keyed by `(lead_id, version)`; re-qualification inserts a new
+version rather than overwriting. "One row per lead" is superseded by "one row per
+lead per version, and every version is retained." `get_evaluation_data()` and the
+default `/audit` list read only the latest version per lead (via the `latest_decisions`
+view); `GET /audit/{lead_id}` exposes the full version history. This is the mechanism
+that makes "written once" true: each version, once written, is never altered or removed.

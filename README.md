@@ -1,4 +1,4 @@
-﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.1
+﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.2
 
 Most AI systems make decisions.  
 Few systems know if those decisions were actually correct.
@@ -147,8 +147,11 @@ Start the server with `uvicorn api:app --reload --port 8000`, then:
 | POST | `/qualify` | Process a lead through the decision pipeline |
 | POST | `/outcome` | Record the real-world outcome for a decision |
 | GET | `/stats` | Decision quality metrics, insights, and outcome breakdown |
-| GET | `/audit` | Recent decisions with outcome status (default: last 20) |
+| GET | `/audit` | Recent decisions with outcome status (default: last 20), latest version per lead |
+| GET | `/audit/{lead_id}` | Full decision version history for one lead, plus its outcomes |
 | GET | `/health` | Health check — database connectivity and config |
+
+Re-qualifying an existing `lead_id` via `POST /qualify` never overwrites its prior decision — it appends a new version. `/stats` and the default `/audit` list always read the latest version; `GET /audit/{lead_id}` shows every version with timestamps.
 
 Interactive docs: `http://localhost:8000/docs`
 
@@ -165,6 +168,7 @@ Interactive docs: `http://localhost:8000/docs`
 | v1.0 | 2026-07-04 | Adopted ARTIFACT_STANDARD Tier 0 — CLAUDE.md, pre-push validation, README restructure, first ADR |
 | v1.1 | 2026-07-05 | Audit remediation (B1, silent degradation): placeholder key detection, simulation-mode banner, loud abort on auth failure, fallback count and reasons in run summary |
 | v1.1 | 2026-07-06 | Audit remediation (silent degradation, follow-up): loud abort on unreachable API and on repeated identical AI-layer failures; real exception class/message now recorded as the fallback reason instead of a generic "no output" string |
+| v1.2 | 2026-07-06 | Audit remediation (M2, mutable decisions): decisions are now append-only and versioned per lead_id — re-qualifying a lead adds a new version instead of overwriting; `/stats` and `/audit` read the latest version, `GET /audit/{lead_id}` exposes full history |
 
 ---
 

@@ -2,6 +2,20 @@
 SQLite persistence layer — AI Decision Engine.
 Stores decisions and outcome feedback for performance evaluation.
 Includes decisions table and outcomes table for the feedback evaluation loop.
+
+Decisions are append-only and versioned per lead_id (audit finding M2:
+`INSERT OR REPLACE` destroyed the original decision on re-qualification,
+contradicting ADR-0001's "written once"). Re-qualifying a lead inserts a
+new (lead_id, version) row; no UPDATE or DELETE path exists on decisions.
+All reads that represent "the current decision" (metrics, the default
+audit list) use the latest version per lead via the `latest_decisions`
+view; the raw `decisions` table preserves full history.
+
+This is a fresh schema, not a migration. The demo DB (data/decisions.db)
+is generated and gitignored — delete it before running against this
+version of the code; a pre-existing DB from the old (unversioned) schema
+will not be altered by CREATE TABLE IF NOT EXISTS and will error on the
+new INSERT.
 """
 
 import sqlite3
@@ -22,11 +36,13 @@ def init_db():
     """Create tables. Safe to call on every startup."""
     with _connect() as conn:
 
-        # Decisions table — one row per lead processed
+        # Decisions table — append-only, one row per (lead_id, version).
+        # Re-qualifying a lead adds a new version; nothing is ever replaced.
         conn.execute("""
             CREATE TABLE IF NOT EXISTS decisions (
                 id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                lead_id         TEXT NOT NULL UNIQUE,
+                lead_id         TEXT NOT NULL,
+                version         INTEGER NOT NULL,
                 run_id          TEXT NOT NULL,
                 raw_text        TEXT,
                 received_at     TEXT,
@@ -36,11 +52,13 @@ def init_db():
                 final_decision  TEXT,
                 fallback_action TEXT,
                 processing_ms   REAL,
-                created_at      TEXT NOT NULL
+                created_at      TEXT NOT NULL,
+                UNIQUE(lead_id, version)
             )
         """)
 
-        # Outcomes table — feedback loop, linked to decisions
+        # Outcomes table — feedback loop, linked to decisions by lead_id
+        # (never by row id), so it stays valid across decision versions.
         conn.execute("""
             CREATE TABLE IF NOT EXISTS outcomes (
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,6 +68,21 @@ def init_db():
                 timestamp   TEXT NOT NULL,
                 FOREIGN KEY (lead_id) REFERENCES decisions(lead_id)
             )
+        """)
+
+        # Current decision per lead = highest version. Everything that
+        # reads "the" decision (metrics, default audit list) goes through
+        # this view; full history stays queryable straight off `decisions`.
+        conn.execute("""
+            CREATE VIEW IF NOT EXISTS latest_decisions AS
+            SELECT d.*
+            FROM decisions d
+            JOIN (
+                SELECT lead_id, MAX(version) AS max_version
+                FROM decisions
+                GROUP BY lead_id
+            ) latest
+            ON d.lead_id = latest.lead_id AND d.version = latest.max_version
         """)
 
         for idx, tbl, col in [
@@ -63,18 +96,30 @@ def init_db():
     logger.debug("Database initialised")
 
 
-def save_decision(result: dict, run_id: str):
+def save_decision(result: dict, run_id: str) -> int:
+    """
+    Append a new decision version for this lead. Never overwrites: the
+    next version number is one past the current max for this lead_id
+    (1 for a lead seen for the first time). Returns the version written.
+    """
     ai  = result.get("ai_output") or {}
     inp = result.get("input") or {}
+    lead_id = inp.get("id")
 
     with _connect() as conn:
+        prev_version = conn.execute(
+            "SELECT COALESCE(MAX(version), 0) FROM decisions WHERE lead_id = ?", (lead_id,)
+        ).fetchone()[0]
+        version = prev_version + 1
+
         conn.execute("""
-            INSERT OR REPLACE INTO decisions
-              (lead_id, run_id, raw_text, received_at, category, confidence, reason,
+            INSERT INTO decisions
+              (lead_id, version, run_id, raw_text, received_at, category, confidence, reason,
                final_decision, fallback_action, processing_ms, created_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
         """, (
-            inp.get("id"),
+            lead_id,
+            version,
             run_id,
             inp.get("raw_text"),
             inp.get("received_at"),
@@ -87,6 +132,14 @@ def save_decision(result: dict, run_id: str):
             datetime.now(timezone.utc).isoformat()
         ))
 
+    if version > 1:
+        logger.warning(
+            f"[{lead_id}] Re-qualified - this is version {version}. "
+            f"Previous version(s) are not overwritten and remain queryable via GET /audit/{lead_id}."
+        )
+
+    return version
+
 
 def lead_exists(lead_id: str) -> bool:
     with _connect() as conn:
@@ -97,11 +150,29 @@ def lead_exists(lead_id: str) -> bool:
 
 
 def get_lead_decision(lead_id: str) -> dict | None:
+    """The current (latest-version) decision for this lead."""
     with _connect() as conn:
         row = conn.execute(
-            "SELECT * FROM decisions WHERE lead_id = ?", (lead_id,)
+            "SELECT * FROM latest_decisions WHERE lead_id = ?", (lead_id,)
         ).fetchone()
     return dict(row) if row else None
+
+
+def get_decision_history(lead_id: str) -> list[dict]:
+    """Every decision version for this lead, oldest first."""
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT * FROM decisions WHERE lead_id = ? ORDER BY version ASC", (lead_id,)
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_lead_outcomes(lead_id: str) -> list[dict]:
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT * FROM outcomes WHERE lead_id = ? ORDER BY timestamp ASC", (lead_id,)
+        ).fetchall()
+    return [dict(r) for r in rows]
 
 
 def save_outcome(lead_id: str, decision: str, outcome: str, timestamp: str):
@@ -115,16 +186,17 @@ def save_outcome(lead_id: str, decision: str, outcome: str, timestamp: str):
 def get_evaluation_data() -> dict:
     """
     Pull raw data needed for the evaluation engine.
-    Returns decision counts and outcome breakdowns.
+    Returns decision counts and outcome breakdowns — always computed
+    against the latest decision version per lead, never raw history.
     """
     with _connect() as conn:
         total_decisions = conn.execute(
-            "SELECT COUNT(*) FROM decisions"
+            "SELECT COUNT(*) FROM latest_decisions"
         ).fetchone()[0]
 
         by_decision = conn.execute("""
             SELECT final_decision, COUNT(*) as count
-            FROM decisions GROUP BY final_decision
+            FROM latest_decisions GROUP BY final_decision
         """).fetchall()
 
         total_outcomes = conn.execute(
@@ -134,14 +206,14 @@ def get_evaluation_data() -> dict:
         outcome_by_decision = conn.execute("""
             SELECT d.final_decision, o.outcome, COUNT(*) as count
             FROM outcomes o
-            JOIN decisions d ON o.lead_id = d.lead_id
+            JOIN latest_decisions d ON o.lead_id = d.lead_id
             GROUP BY d.final_decision, o.outcome
         """).fetchall()
 
         # False positives: sent to sales but NOT converted
         false_positives = conn.execute("""
             SELECT COUNT(*) FROM outcomes o
-            JOIN decisions d ON o.lead_id = d.lead_id
+            JOIN latest_decisions d ON o.lead_id = d.lead_id
             WHERE d.final_decision = 'send_to_sales'
             AND o.outcome != 'converted'
         """).fetchone()[0]
@@ -149,7 +221,7 @@ def get_evaluation_data() -> dict:
         # Missed opportunities: manual_review or archive but WAS converted
         missed = conn.execute("""
             SELECT COUNT(*) FROM outcomes o
-            JOIN decisions d ON o.lead_id = d.lead_id
+            JOIN latest_decisions d ON o.lead_id = d.lead_id
             WHERE d.final_decision IN ('manual_review', 'archive')
             AND o.outcome = 'converted'
         """).fetchone()[0]
@@ -165,12 +237,13 @@ def get_evaluation_data() -> dict:
 
 
 def get_recent_decisions(limit: int = 20) -> list[dict]:
+    """Latest decision version per lead, with outcome status if any."""
     with _connect() as conn:
         rows = conn.execute("""
-            SELECT d.lead_id, d.final_decision, d.category, d.confidence,
+            SELECT d.lead_id, d.version, d.final_decision, d.category, d.confidence,
                    d.fallback_action, d.created_at,
                    o.outcome, o.timestamp as outcome_timestamp
-            FROM decisions d
+            FROM latest_decisions d
             LEFT JOIN outcomes o ON d.lead_id = o.lead_id
             ORDER BY d.created_at DESC LIMIT ?
         """, (limit,)).fetchall()

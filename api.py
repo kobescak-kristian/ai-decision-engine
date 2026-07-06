@@ -27,6 +27,7 @@ from config.settings import config
 from utils.logger import logger
 from database.db import (
     init_db, save_decision, get_recent_decisions,
+    get_decision_history, get_lead_outcomes,
     test_connection, generate_run_id
 )
 
@@ -43,7 +44,7 @@ app = FastAPI(
         "Evaluates whether AI-driven lead decisions are actually effective. "
         "Decisions are made, outcomes are tracked, and performance is measured over time."
     ),
-    version="1.1.0"
+    version="1.2.0"
 )
 
 
@@ -150,7 +151,7 @@ def health():
         "simulation_mode":     config.simulation_mode(),
         "simulation_reason":   config.simulation_reason(),
         "confidence_threshold": config.CONFIDENCE_THRESHOLD,
-        "version":             "1.1.0"
+        "version":             "1.2.0"
     }
 
 
@@ -212,6 +213,26 @@ def audit(limit: int = Query(default=20, le=100)):
     """
     Recent decisions with their outcome status.
     Shows which decisions have received outcome feedback.
+    Reflects the latest decision version per lead — see GET /audit/{lead_id}
+    for full re-qualification history.
     """
     records = get_recent_decisions(limit=limit)
     return {"count": len(records), "records": records}
+
+
+@app.get("/audit/{lead_id}")
+def audit_lead_history(lead_id: str):
+    """
+    Full decision version history for one lead, plus its recorded outcomes.
+    Re-qualifying a lead via POST /qualify never overwrites — it appends a
+    new version. This endpoint is where that full history is visible; the
+    default /audit list and /stats only ever use the latest version.
+    """
+    history = get_decision_history(lead_id)
+    if not history:
+        raise HTTPException(status_code=404, detail=f"Lead '{lead_id}' not found.")
+    return {
+        "lead_id":  lead_id,
+        "versions": history,
+        "outcomes": get_lead_outcomes(lead_id)
+    }
