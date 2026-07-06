@@ -74,8 +74,8 @@ def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
             _abort(e, len(results))
 
         validation_result = validator.validate(ai_output, record.id)
-
         fallback_action = FallbackAction.NONE
+        fallback_reason  = None   # persisted as validation_errors when a fallback occurs
 
         # Minimal fallback — assign safe default on validation failure
         # (no retry; emphasis is on decision tracking, not failure handling)
@@ -114,7 +114,10 @@ def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
                 )
             )
             fallback_action = FallbackAction.MANUAL_REVIEW_FLAGGED
-            validation_result = validator.validate(ai_output, record.id)
+            # validation_result is deliberately NOT re-validated/overwritten here:
+            # the safe default always passes, and reassigning would silently erase
+            # the original failure from the persisted audit trail (Reliability
+            # audit M1 - validation-overwrite pattern).
         else:
             consecutive_ai_failures = 0
             last_ai_failure_reason  = None
@@ -133,7 +136,11 @@ def run_pipeline(input_path: str, output_path: str | None = None) -> list[dict]:
 
         result_dict = result.model_dump()
         results.append(result_dict)
-        save_decision(result_dict, run_id)
+        save_decision(
+            result_dict, run_id,
+            validation_passed=validation_result.valid,
+            validation_errors=fallback_reason
+        )
 
         logger.info(
             f"[{record.id}] -> {final_decision.value} | "

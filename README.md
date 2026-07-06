@@ -1,4 +1,4 @@
-﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.3
+﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.4
 
 Most AI systems make decisions.  
 Few systems know if those decisions were actually correct.
@@ -155,6 +155,8 @@ Re-qualifying an existing `lead_id` via `POST /qualify` never overwrites its pri
 
 `POST /outcome` accepts one outcome per lead — a second POST for the same `lead_id` returns `409 Conflict` naming the existing outcome and when it was recorded, instead of overwriting it.
 
+`GET /audit` and `GET /audit/{lead_id}` include `validation_passed` and `validation_errors` for every decision — a record that was routed via the safe-default fallback always shows `validation_passed: false` with the original failure reason, never a passing state.
+
 Interactive docs: `http://localhost:8000/docs`
 
 ---
@@ -178,6 +180,7 @@ Interactive docs: `http://localhost:8000/docs`
 | v1.1 | 2026-07-06 | Audit remediation (silent degradation, follow-up): loud abort on unreachable API and on repeated identical AI-layer failures; real exception class/message now recorded as the fallback reason instead of a generic "no output" string |
 | v1.2 | 2026-07-06 | Audit remediation (M2, mutable decisions): decisions are now append-only and versioned per lead_id — re-qualifying a lead adds a new version instead of overwriting; `/stats` and `/audit` read the latest version, `GET /audit/{lead_id}` exposes full history |
 | v1.3 | 2026-07-06 | Audit remediation (M3, duplicate outcomes): outcomes are now one-per-lead (`UNIQUE(lead_id)`) — a second `POST /outcome` for the same lead returns 409 instead of being silently double-counted; `seed_outcomes.py` is idempotent (skips already-recorded leads instead of clearing and re-inserting) |
+| v1.4 | 2026-07-06 | Audit remediation (validation-overwrite, mirrors the Reliability audit's M1): decisions now persist `validation_passed`/`validation_errors` reflecting the ORIGINAL validation outcome — a fallback record is never re-validated into a passing state; both fields exposed in `/audit` and `/audit/{lead_id}` |
 
 ---
 

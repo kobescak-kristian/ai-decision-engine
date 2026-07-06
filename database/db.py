@@ -23,6 +23,17 @@ rates summing over 100%). `outcomes.lead_id` is UNIQUE; a second outcome
 for an already-recorded lead is rejected in pipeline/outcome_handler.py,
 not silently replaced. Same fresh-schema caveat as above applies to a
 pre-existing DB from before this constraint existed.
+
+decisions.validation_passed/validation_errors persist the ORIGINAL
+validation outcome for a record, before any safe-default fallback was
+applied (the validation-overwrite pattern from the Reliability engine
+audit, M1 there: re-validating the safe default always passes, and
+reassigning the validation result to that pass silently erased the
+real failure). A fallback record is written with validation_passed=0
+and the real failure reason in validation_errors; that state is set
+once at INSERT time and is never revised afterward, by design (see
+save_decision()). Clean records are validation_passed=1,
+validation_errors=NULL.
 """
 
 import sqlite3
@@ -59,6 +70,8 @@ def init_db():
                 final_decision  TEXT,
                 fallback_action TEXT,
                 processing_ms   REAL,
+                validation_passed INTEGER NOT NULL,
+                validation_errors TEXT,
                 created_at      TEXT NOT NULL,
                 UNIQUE(lead_id, version)
             )
@@ -106,11 +119,21 @@ def init_db():
     logger.debug("Database initialised")
 
 
-def save_decision(result: dict, run_id: str) -> int:
+def save_decision(
+    result: dict, run_id: str,
+    validation_passed: bool, validation_errors: str | None = None
+) -> int:
     """
     Append a new decision version for this lead. Never overwrites: the
     next version number is one past the current max for this lead_id
     (1 for a lead seen for the first time). Returns the version written.
+
+    validation_passed/validation_errors are supplied explicitly by the
+    caller and capture the ORIGINAL validation outcome for this record -
+    before any safe-default fallback was applied. This is set once, at
+    insert time, and never revised: a fallback record is persisted with
+    validation_passed=0 and the real failure reason, never with a
+    passing state (mirrors the Reliability audit's M1 fix).
     """
     ai  = result.get("ai_output") or {}
     inp = result.get("input") or {}
@@ -125,8 +148,9 @@ def save_decision(result: dict, run_id: str) -> int:
         conn.execute("""
             INSERT INTO decisions
               (lead_id, version, run_id, raw_text, received_at, category, confidence, reason,
-               final_decision, fallback_action, processing_ms, created_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+               final_decision, fallback_action, processing_ms, validation_passed,
+               validation_errors, created_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """, (
             lead_id,
             version,
@@ -139,6 +163,8 @@ def save_decision(result: dict, run_id: str) -> int:
             result.get("final_decision"),
             result.get("fallback_action"),
             result.get("processing_ms"),
+            1 if validation_passed else 0,
+            validation_errors,
             datetime.now(timezone.utc).isoformat()
         ))
 
@@ -261,7 +287,7 @@ def get_recent_decisions(limit: int = 20) -> list[dict]:
     with _connect() as conn:
         rows = conn.execute("""
             SELECT d.lead_id, d.version, d.final_decision, d.category, d.confidence,
-                   d.fallback_action, d.created_at,
+                   d.fallback_action, d.validation_passed, d.validation_errors, d.created_at,
                    o.outcome, o.timestamp as outcome_timestamp
             FROM latest_decisions d
             LEFT JOIN outcomes o ON d.lead_id = o.lead_id

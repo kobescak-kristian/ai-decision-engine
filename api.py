@@ -44,7 +44,7 @@ app = FastAPI(
         "Evaluates whether AI-driven lead decisions are actually effective. "
         "Decisions are made, outcomes are tracked, and performance is measured over time."
     ),
-    version="1.3.0"
+    version="1.4.0"
 )
 
 
@@ -91,10 +91,11 @@ def process_lead(lead: LeadRequest, run_id: str) -> LeadResponse:
 
     ai_output, ai_failure_reason = ai_processor.process_record(record)
     validation_result = validator.validate(ai_output, record.id)
-
     fallback_action = FallbackAction.NONE
+    fallback_reason  = None   # persisted as validation_errors when a fallback occurs
 
     if not validation_result.valid:
+        fallback_reason = ai_failure_reason or "; ".join(validation_result.errors)
         ai_output = AIOutput(
             category="unknown",
             confidence=0.0,
@@ -105,7 +106,8 @@ def process_lead(lead: LeadRequest, run_id: str) -> LeadResponse:
             )
         )
         fallback_action = FallbackAction.MANUAL_REVIEW_FLAGGED
-        validation_result = validator.validate(ai_output, record.id)
+        # validation_result intentionally left as the original failure - see
+        # main.py's run_pipeline() for why (Reliability audit M1).
 
     final_decision = router.route(ai_output, fallback_action, record.id)
     processing_ms  = round((time.time() - t_start) * 1000, 2)
@@ -126,7 +128,11 @@ def process_lead(lead: LeadRequest, run_id: str) -> LeadResponse:
         "processing_ms":   processing_ms
     }
 
-    save_decision(result_dict, run_id)
+    save_decision(
+        result_dict, run_id,
+        validation_passed=validation_result.valid,
+        validation_errors=fallback_reason
+    )
 
     return LeadResponse(
         id=record.id,
@@ -151,7 +157,7 @@ def health():
         "simulation_mode":     config.simulation_mode(),
         "simulation_reason":   config.simulation_reason(),
         "confidence_threshold": config.CONFIDENCE_THRESHOLD,
-        "version":             "1.3.0"
+        "version":             "1.4.0"
     }
 
 
