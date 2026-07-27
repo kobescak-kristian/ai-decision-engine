@@ -1,5 +1,7 @@
 ﻿# AI Decision Engine (Feedback & Evaluation Loop) — v1.4
 
+[![CI](https://github.com/kobescak-kristian/ai-decision-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/kobescak-kristian/ai-decision-engine/actions/workflows/ci.yml)
+
 Most AI systems make decisions.  
 Few systems know if those decisions were actually correct.
 
@@ -105,6 +107,8 @@ cp env.example .env
 ```
 
 `env.example` ships with an empty `OPENAI_API_KEY`, so this setup starts in **simulation mode** — the run banner prints `MODE: SIMULATION` with the reason, and `GET /health` reports it. To use a real model, add your key to `.env`; an invalid key, an unreachable API, or repeated identical AI-layer failures abort the CLI run loudly (non-zero exit, named cause) instead of degrading results. See [`env.example`](env.example) for all available settings.
+
+The keyless simulation pipeline runs in CI on every push — Ubuntu, macOS and Windows, Python 3.12 and 3.14 — asserting the committed decision breakdown and seeded-outcome coverage.
 
 ---
 
