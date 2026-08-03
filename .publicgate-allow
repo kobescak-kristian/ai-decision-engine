@@ -1,1 +1,8 @@
-CLAUDE.md | kristian-os, FABLE_QUEUE, FAILURE_REGISTER, GOVERNANCE | owner ruling 2026-07-26 (Q-59a session; extends 2026-07-24 exposure-KEPT, names-only scope; home record rides owner close)
+CLAUDE.md | This repo follows ARTIFACT_STANDARD.md (kristian-os). Tier 0 only unless a trigger fires. | owner ruling 2026-08-04 (entry-exact migration, canary-resolve-a)
+CLAUDE.md | - Governance home: kristian-os (PRINCIPLES -> GOVERNANCE -> | owner ruling 2026-08-04 (entry-exact migration, canary-resolve-a)
+CLAUDE.md |   FAILURE_REGISTER). Read before any irreversible action. | owner ruling 2026-08-04 (entry-exact migration, canary-resolve-a)
+CLAUDE.md | - Work comes from the governance repo's queue (kristian-os, | owner ruling 2026-08-04 (entry-exact migration, canary-resolve-a)
+CLAUDE.md |   FABLE_QUEUE); do not invent tasks. | owner ruling 2026-08-04 (entry-exact migration, canary-resolve-a)
+# adjudicated-secrets
+pipeline/ai_processor.py |     client = openai.OpenAI(api_key=config.OPENAI_API_KEY) | config/settings.py:21 |     _RAW_OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip() | owner ruling 2026-08-04
+pipeline/ai_processor.py |         client = openai.OpenAI(api_key=config.OPENAI_API_KEY) | config/settings.py:21 |     _RAW_OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip() | owner ruling 2026-08-04
