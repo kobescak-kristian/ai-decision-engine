@@ -32,6 +32,7 @@ No `## Status` heading exists in this README (unlike ai-reliability-engine/ai-im
 - **2026-08-04** (`3ac68bd`, `ff7c590`, `f3f1d0f`) — Allowlist migrated to entry-exact form; Apache-2.0 license added; hook rollout.
 - **2026-09-15** (`c83dc28`) — Canonical AGENTS.md router adopted.
 - **2026-09-19** (this commit) — STATE.md added (this file); validator gains a STATE.md-existence check, the obsolete 5-record decision cap is removed, and the six-name BANNED_WITHOUT_TRIGGER list is propagated (live-file precondition checked, clear).
+- **2026-10-07** — Exact dependency pins: the six direct dependencies in `requirements.txt` changed from `>=` floors to `==` pins at the versions CI already installed on every OS and Python leg (pydantic 2.13.5, python-dotenv 1.2.4, fastapi 0.142.2, uvicorn[standard] 0.54.0, openai 3.26.0, httpx 0.28.1). No version changed what CI runs; transitive dependencies are not pinned.
 
 ## Open loops
 
