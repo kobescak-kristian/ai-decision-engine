@@ -2,7 +2,7 @@
 
 **Classification:** PROJECT · T0 (AI-assisted lead-routing pipeline with a delayed feedback loop; `domains/github-ops/CONVENTIONS.md` PROJECT/SYSTEM/EXPERIMENT taxonomy).
 
-**RECONSTRUCTED** (GOVERNANCE.md Build-repo STATE rule, clause 7): derived from git history and the README Version Log at scaffold time (2026-09-19, Q-72(f)), not written contemporaneously. Reconstructed entries are retrospective evidence, not contemporaneous record — the commit that adds this file begins the contemporaneous record going forward.
+**RECONSTRUCTED** (Build-repo STATE rule, clause 7): derived from git history and the README Version Log at scaffold time (2026-09-19), not written contemporaneously. Reconstructed entries are retrospective evidence, not contemporaneous record — the commit that adds this file begins the contemporaneous record going forward.
 
 ## Current state
 
@@ -26,12 +26,12 @@ No `## Status` heading exists in this README (unlike ai-reliability-engine/ai-im
 ## Build history since the Version Log's last entry (from `git log --reverse`)
 
 - **2026-07-11** (`fb8ad35`) — CLAUDE.md: session boot + governance pointer.
-- **2026-07-24** (`d810583`) — Canonical pre-commit local-path guard added (Q-48 wave 1).
+- **2026-07-24** (`d810583`) — Canonical pre-commit local-path guard added (wave 1).
 - **2026-07-27** (`701282c`, `68ecf1b`) — Keyless deterministic CI added (3-OS workflow); CI badge + coverage note.
 - **2026-08-03** (`bf659bb`) — Publish-gate coverage canary added.
-- **2026-08-04** (`3ac68bd`, `ff7c590`, `f3f1d0f`) — Allowlist migrated to entry-exact form; Apache-2.0 license added; Q-35 hook rollout.
-- **2026-09-15** (`c83dc28`) — Canonical AGENTS.md router adopted (Q-93).
-- **2026-09-19** (this commit) — Q-72(f): STATE.md added (this file); validator gains a STATE.md-existence check, the obsolete 5-record decision cap is removed, and the six-name BANNED_WITHOUT_TRIGGER list is propagated (live-file precondition checked, clear).
+- **2026-08-04** (`3ac68bd`, `ff7c590`, `f3f1d0f`) — Allowlist migrated to entry-exact form; Apache-2.0 license added; hook rollout.
+- **2026-09-15** (`c83dc28`) — Canonical AGENTS.md router adopted.
+- **2026-09-19** (this commit) — STATE.md added (this file); validator gains a STATE.md-existence check, the obsolete 5-record decision cap is removed, and the six-name BANNED_WITHOUT_TRIGGER list is propagated (live-file precondition checked, clear).
 
 ## Open loops
 
