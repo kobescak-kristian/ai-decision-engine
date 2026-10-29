@@ -33,6 +33,7 @@ No `## Status` heading exists in this README (unlike ai-reliability-engine/ai-im
 - **2026-09-15** (`c83dc28`) — Canonical AGENTS.md router adopted.
 - **2026-09-19** (this commit) — STATE.md added (this file); validator gains a STATE.md-existence check, the obsolete 5-record decision cap is removed, and the six-name BANNED_WITHOUT_TRIGGER list is propagated (live-file precondition checked, clear).
 - **2026-10-07** — Exact dependency pins: the six direct dependencies in `requirements.txt` changed from `>=` floors to `==` pins at the versions CI already installed on every OS and Python leg (pydantic 2.13.5, python-dotenv 1.2.4, fastapi 0.142.2, uvicorn[standard] 0.54.0, openai 3.26.0, httpx 0.28.1). No version changed what CI runs; transitive dependencies are not pinned.
+- **2026-10-29**: README Outcome figures now checked in CI. `tests/test_ci.py` gains `test_evaluation_headline_metrics`, which asserts 68% conversion, 32% false positive rate, 4 missed opportunities and evaluator status `warning` (the figures the README already published; no existing check or threshold changed). Cover `architecture.png` redrawn: title v1.4 without the dash, PERSIST box shows `lead_id + version` (append-only) instead of `lead_id (UNIQUE)`, and the MANUAL REVIEW box no longer names a review queue or reviewer step that the code does not have.
 
 ## Open loops
 
