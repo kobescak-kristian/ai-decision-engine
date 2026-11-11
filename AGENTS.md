@@ -12,6 +12,8 @@ each routing decision, accepts the real-world outcome later, and evaluates
 decision quality from those outcomes instead of stopping at classification.
 Human overview: `README.md`.
 
+Classification: PROJECT.
+
 ## Authority and conflict handling
 
 | Question | Canonical source |
