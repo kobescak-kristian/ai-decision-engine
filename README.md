@@ -184,7 +184,7 @@ Interactive docs: `http://localhost:8000/docs`
 | v1.1 | 2026-07-05 | Audit remediation (B1, silent degradation): placeholder key detection, simulation-mode banner, loud abort on auth failure, fallback count and reasons in run summary |
 | v1.0 | 2026-07-04 | Documentation standard adopted — CLAUDE.md, pre-push validation, README restructure, first ADR |
 | v1.0 | 2026-06-20 | Added outcome seeding script and demo sequence; fixed decision routing count; cleaned up low-severity audit items |
-| v1.0 | 2026-06-15 – 2026-06-18 | Fixed README casing/formatting; corrected System Context references across all five engines |
+| v1.0 | 2026-06-18 | Fixed README casing/formatting; corrected System Context references across all five engines |
 | v1.0 | 2026-04-24 | Added System Context section; clarified project title |
 | v1.0 | 2026-04-23 | Initial release — decision pipeline, feedback loop, API |
 
