@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/kobescak-kristian/ai-decision-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/kobescak-kristian/ai-decision-engine/actions/workflows/ci.yml)
 
+Measures if AI decisions were actually correct using outcome feedback and evaluation metrics.
+
 Most AI systems make decisions.  
 Few systems know if those decisions were actually correct.
 
