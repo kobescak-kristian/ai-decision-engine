@@ -1,3 +1,4 @@
+# The entries below are code lines that read an API key from an environment variable. No key is stored in this repository.
 # adjudicated-secrets
 pipeline/ai_processor.py |     client = openai.OpenAI(api_key=config.OPENAI_API_KEY) | config/settings.py:21 |     _RAW_OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip() | owner ruling 2026-08-04
 pipeline/ai_processor.py |         client = openai.OpenAI(api_key=config.OPENAI_API_KEY) | config/settings.py:21 |     _RAW_OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip() | owner ruling 2026-08-04
